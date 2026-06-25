@@ -1,4 +1,5 @@
 import Hero from '@/components/home/Hero';
+import ProductMarquee from '@/components/home/ProductMarquee';
 import Categories from '@/components/home/Categories';
 import Promise from '@/components/home/Promise';
 import Featured from '@/components/home/Featured';
@@ -11,6 +12,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <ProductMarquee />
       <Categories />
       <Promise />
       <AboutTeaser />

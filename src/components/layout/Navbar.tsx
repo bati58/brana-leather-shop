@@ -21,9 +21,14 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   const { getItemCount, openCart } = useCartStore();
-  const itemCount = getItemCount();
+  const itemCount = isMounted ? getItemCount() : 0;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
