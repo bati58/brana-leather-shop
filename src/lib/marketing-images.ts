@@ -1,33 +1,27 @@
-import { cloudinaryUrl, isCloudinaryConfigured } from '@/lib/cloudinary';
+import { leatherMarketingImage } from '@/lib/product-images';
 import type { Category } from '@/types';
 
-export const MARKETING_CLOUD_IDS = {
-  bags: 'samples/ecommerce/leather-bag-gray',
-  footwear: 'samples/ecommerce/shoes',
-  belts: 'samples/ecommerce/analog-classic',
-  'small-leather-goods': 'samples/ecommerce/accessories-bag',
-  'clothing-accessories': 'samples/man-on-a-street',
-  'home-office': 'samples/ecommerce/analog-classic',
-  gifts: 'samples/ecommerce/accessories-bag',
+const CATEGORY_IMAGE_KEY = {
+  bags: 'bag',
+  footwear: 'shoes',
+  belts: 'classic',
+  'small-leather-goods': 'pouch',
+  'clothing-accessories': 'jacket',
+  'home-office': 'pouch',
+  gifts: 'bag',
 } as const;
 
-function marketingImage(publicId: string, width = 800): string {
-  if (isCloudinaryConfigured()) {
-    return cloudinaryUrl(publicId, { width, crop: 'fill' });
-  }
-  return `/images/products/placeholder.jpg`;
-}
-
 export function categoryImage(category: Category): string {
-  const id = MARKETING_CLOUD_IDS[category];
-  return marketingImage(id, 900);
+  const key = CATEGORY_IMAGE_KEY[category];
+  return leatherMarketingImage(key, 900);
 }
 
+/** Instagram grid — distinct leather product shots */
 export const instagramFeedImages = [
-  'samples/ecommerce/shoes',
-  'samples/shoe',
-  'samples/ecommerce/leather-bag-gray',
-  'samples/ecommerce/accessories-bag',
-  'samples/man-on-a-street',
-  'samples/people/smiling-man',
-].map((id) => marketingImage(id, 700));
+  leatherMarketingImage('shoes', 700),
+  leatherMarketingImage('bag', 700),
+  leatherMarketingImage('jacket', 700),
+  leatherMarketingImage('pouch', 700),
+  leatherMarketingImage('classic', 700),
+  leatherMarketingImage('shoe', 700),
+];
