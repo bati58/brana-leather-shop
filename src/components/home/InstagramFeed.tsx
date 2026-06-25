@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { instagramUrl, instagramHandleDisplay } from '@/lib/site-config';
+import { instagramUrl, siteConfig } from '@/lib/site-config';
 
 const placeholderPosts = [
   'photo-1611930022073-bf02e42f1f2a',
@@ -14,7 +14,6 @@ const placeholderPosts = [
 ];
 
 const igUrl = instagramUrl();
-const igHandle = instagramHandleDisplay();
 
 export default function InstagramFeed() {
   return (
@@ -26,7 +25,7 @@ export default function InstagramFeed() {
               Instagram
             </p>
             <h2 className="font-display text-3xl sm:text-4xl text-brand-dark">
-              Latest from {igHandle}
+              Workshop &amp; Style
             </h2>
             <p className="text-brand-gray font-body mt-3">
               A quick look at new leather drops, workshop moments, and styling ideas.
@@ -38,7 +37,7 @@ export default function InstagramFeed() {
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-2 text-brand-gold hover:text-brand-tan transition-colors font-body font-medium"
           >
-            Follow for updates →
+            Follow on Instagram →
           </Link>
         </div>
 
@@ -50,7 +49,7 @@ export default function InstagramFeed() {
               target="_blank"
               rel="noopener noreferrer"
               className="relative aspect-square overflow-hidden rounded-lg border border-brand-dark/5 bg-white group"
-              aria-label={`View ${igHandle} on Instagram`}
+              aria-label={`View ${siteConfig.name} on Instagram`}
             >
               <Image
                 src={`https://images.unsplash.com/${id}?w=700&q=80&fit=crop`}
@@ -70,7 +69,7 @@ export default function InstagramFeed() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-brand-gold hover:text-brand-tan transition-colors font-body font-medium"
           >
-            Follow {igHandle} →
+            Follow on Instagram →
           </Link>
         </div>
       </div>

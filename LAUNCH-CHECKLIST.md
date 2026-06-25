@@ -5,9 +5,9 @@
 | Step | Status | Notes |
 |------|--------|-------|
 | **3 Payments** | ✅ | Telebirr, CBE, COD active. Add `CHAPA_SECRET_KEY` for live mobile pay |
-| **7 Email** | ✅ | `batidev01@gmail.com` — Resend optional (`RESEND_API_KEY`) |
+| **7 Email** | ✅ | Resend live — branded templates with WhatsApp + payment status |
 | **8 Social** | ✅ | Instagram, Telegram, WhatsApp wired |
-| **4 Supabase scaffold** | ✅ | Schema + API persistence when keys set |
+| **4 Supabase** | ✅ | Schema run + keys set — orders/subscribers/contact persist |
 | **6 Analytics scaffold** | ✅ | GA4, Clarity, TikTok, Meta — load when env IDs set |
 | **Shipping config** | ✅ | `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD`, `SHIPPING_FEE` |
 

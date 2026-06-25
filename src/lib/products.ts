@@ -1,7 +1,45 @@
 import type { Product, Category, Material, SortOption, FilterState } from '@/types';
+import { cloudinaryUrl, isCloudinaryConfigured } from '@/lib/cloudinary';
 
-const IMG = (id: string, w = 800) =>
-  `https://images.unsplash.com/${id}?w=${w}&q=80&fit=crop`;
+/**
+ * Product images — use one of:
+ * - Cloudinary path:    'products/heritage-oxford-shoes-01'  (upload to Media Library)
+ * - Cloudinary sample:  'samples/ecommerce/shoes'          (demo until you upload)
+ * - Local file:         '/images/products/wallet-01.jpg'
+ * - Full URL:           'https://...'
+ */
+function IMG(src: string, w = 800): string {
+  if (src.startsWith('http')) {
+    return src.includes('?') ? src : `${src}?w=${w}&q=80&fit=crop`;
+  }
+  if (src.startsWith('/')) return src;
+  if (src.startsWith('photo-')) {
+    return `https://images.unsplash.com/${src}?w=${w}&q=80&fit=crop`;
+  }
+  if (isCloudinaryConfigured()) {
+    return cloudinaryUrl(src, { width: w });
+  }
+  return `/images/products/${src.replace(/^products\//, '')}`;
+}
+
+/** Category fallbacks until you upload to products/{slug}-01 … -04 in Cloudinary */
+function gallery(category: keyof typeof CLOUD) {
+  return CLOUD[category].map((id) => IMG(id));
+}
+
+/** After uploading real photos — replace gallery() with uploadGallery('product-slug') */
+function uploadGallery(slug: string) {
+  return [1, 2, 3, 4].map((n) => IMG(`products/${slug}-${String(n).padStart(2, '0')}`));
+}
+
+const CLOUD = {
+  shoes: ['samples/ecommerce/shoes', 'samples/shoe', 'samples/ecommerce/shoes', 'samples/shoe'],
+  jackets: ['samples/man-on-a-street', 'samples/people/smiling-man', 'samples/man-portrait', 'samples/outdoor-woman'],
+  wallets: ['samples/ecommerce/accessories-bag', 'samples/ecommerce/analog-classic', 'samples/ecommerce/accessories-bag', 'samples/ecommerce/analog-classic'],
+  bags: ['samples/ecommerce/leather-bag-gray', 'samples/ecommerce/accessories-bag', 'samples/ecommerce/leather-bag-gray', 'samples/ecommerce/accessories-bag'],
+  belts: ['samples/ecommerce/analog-classic', 'samples/ecommerce/accessories-bag', 'samples/ecommerce/analog-classic', 'samples/ecommerce/accessories-bag'],
+  accessories: ['samples/ecommerce/accessories-bag', 'samples/ecommerce/analog-classic', 'samples/ecommerce/accessories-bag', 'samples/ecommerce/analog-classic'],
+} as const;
 
 export const products: Product[] = [
   {
@@ -13,13 +51,8 @@ export const products: Product[] = [
     priceUsd: 110,
     category: 'shoes',
     material: 'full-grain',
-    images: [
-      IMG('photo-1614252237536-bc5935eb1e89'),
-      IMG('photo-1533867610401-7625fa8c8de4'),
-      IMG('photo-1614252237536-bc5935eb1e89', 400),
-      IMG('photo-1549298916-b41d501d3772'),
-    ],
-    hoverImage: IMG('photo-1549298916-b41d501d3772'),
+    images: gallery('shoes'),
+    hoverImage: IMG('samples/shoe'),
     badge: 'bestseller',
     featured: true,
     variants: [
@@ -46,13 +79,8 @@ export const products: Product[] = [
     priceUsd: 250,
     category: 'jackets',
     material: 'top-grain',
-    images: [
-      IMG('photo-1551028719-00167b16eac5'),
-      IMG('photo-1520975916093-0df45c780c64'),
-      IMG('photo-1591047139829-d91aecb6caea'),
-      IMG('photo-1521223260152-fd5e720b0142'),
-    ],
-    hoverImage: IMG('photo-1520975916093-0df45c780c64'),
+    images: gallery('jackets'),
+    hoverImage: IMG('samples/people/smiling-man'),
     badge: 'bestseller',
     featured: true,
     variants: [
@@ -78,13 +106,8 @@ export const products: Product[] = [
     priceUsd: 28,
     category: 'wallets',
     material: 'full-grain',
-    images: [
-      IMG('photo-1627123424574-724758594e93'),
-      IMG('photo-1606761568499-6d2451b23c66'),
-      IMG('photo-1590874103328-eac38a683ce7'),
-      IMG('photo-1627123424574-724758594e93', 400),
-    ],
-    hoverImage: IMG('photo-1606761568499-6d2451b23c66'),
+    images: gallery('wallets'),
+    hoverImage: IMG('samples/ecommerce/analog-classic'),
     badge: 'new',
     featured: true,
     variants: [
@@ -110,13 +133,8 @@ export const products: Product[] = [
     priceUsd: 140,
     category: 'bags',
     material: 'full-grain',
-    images: [
-      IMG('photo-1547949006-1cc1a64d488d'),
-      IMG('photo-1553062407-98eeb64c6a62'),
-      IMG('photo-1491637639811-60e2756cc1c7'),
-      IMG('photo-1622560480605-d83c85127dd2'),
-    ],
-    hoverImage: IMG('photo-1553062407-98eeb64c6a62'),
+    images: gallery('bags'),
+    hoverImage: IMG('samples/ecommerce/accessories-bag'),
     featured: true,
     variants: [
       { color: 'Cognac', colorHex: '#A0522D', stock: 4 },
@@ -140,13 +158,8 @@ export const products: Product[] = [
     priceUsd: 25,
     category: 'belts',
     material: 'full-grain',
-    images: [
-      IMG('photo-1624222247344-550fb60583fd'),
-      IMG('photo-1553062407-98eeb64c6a62', 600),
-      IMG('photo-1624222247344-550fb60583fd', 400),
-      IMG('photo-1590874103328-eac38a683ce7'),
-    ],
-    hoverImage: IMG('photo-1624222247344-550fb60583fd', 400),
+    images: gallery('belts'),
+    hoverImage: IMG('samples/ecommerce/analog-classic'),
     badge: 'bestseller',
     variants: [
       { size: '32', color: 'Brown', colorHex: '#8B4513', stock: 8 },
@@ -171,13 +184,8 @@ export const products: Product[] = [
     priceUsd: 125,
     category: 'shoes',
     material: 'full-grain',
-    images: [
-      IMG('photo-1638243384920-80b47f0f5c78'),
-      IMG('photo-1608256246200-53e635b5b65f'),
-      IMG('photo-1549298916-b41d501d3772'),
-      IMG('photo-1614252237536-bc5935eb1e89'),
-    ],
-    hoverImage: IMG('photo-1608256246200-53e635b5b65f'),
+    images: gallery('shoes'),
+    hoverImage: IMG('samples/ecommerce/shoes'),
     variants: [
       { size: '41', color: 'Black', colorHex: '#1A1A1A', stock: 4 },
       { size: '42', color: 'Black', colorHex: '#1A1A1A', stock: 3 },
@@ -201,13 +209,8 @@ export const products: Product[] = [
     priceUsd: 280,
     category: 'jackets',
     material: 'top-grain',
-    images: [
-      IMG('photo-1591047139829-d91aecb6caea'),
-      IMG('photo-1521223260152-fd5e720b0142'),
-      IMG('photo-1551028719-00167b16eac5'),
-      IMG('photo-1520975916093-0df45c780c64'),
-    ],
-    hoverImage: IMG('photo-1521223260152-fd5e720b0142'),
+    images: gallery('jackets'),
+    hoverImage: IMG('samples/man-portrait'),
     badge: 'new',
     variants: [
       { size: 'M', color: 'Brown', colorHex: '#8B4513', stock: 2 },
@@ -231,13 +234,8 @@ export const products: Product[] = [
     priceUsd: 16,
     category: 'wallets',
     material: 'full-grain',
-    images: [
-      IMG('photo-1606761568499-6d2451b23c66'),
-      IMG('photo-1627123424574-724758594e93'),
-      IMG('photo-1590874103328-eac38a683ce7'),
-      IMG('photo-1606761568499-6d2451b23c66', 400),
-    ],
-    hoverImage: IMG('photo-1590874103328-eac38a683ce7'),
+    images: gallery('wallets'),
+    hoverImage: IMG('samples/ecommerce/accessories-bag'),
     variants: [
       { color: 'Black', colorHex: '#1A1A1A', stock: 15 },
       { color: 'Tan', colorHex: '#C4956A', stock: 10 },
@@ -260,13 +258,8 @@ export const products: Product[] = [
     priceUsd: 165,
     category: 'bags',
     material: 'full-grain',
-    images: [
-      IMG('photo-1553062407-98eeb64c6a62'),
-      IMG('photo-1547949006-1cc1a64d488d'),
-      IMG('photo-1491637639811-60e2756cc1c7'),
-      IMG('photo-1622560480605-d83c85127dd2'),
-    ],
-    hoverImage: IMG('photo-1491637639811-60e2756cc1c7'),
+    images: gallery('bags'),
+    hoverImage: IMG('samples/ecommerce/leather-bag-gray'),
     badge: 'bestseller',
     variants: [
       { color: 'Brown', colorHex: '#8B4513', stock: 5 },
@@ -290,13 +283,8 @@ export const products: Product[] = [
     priceUsd: 105,
     category: 'shoes',
     material: 'full-grain',
-    images: [
-      IMG('photo-1533867610401-7625fa8c8de4'),
-      IMG('photo-1614252237536-bc5935eb1e89'),
-      IMG('photo-1549298916-b41d501d3772'),
-      IMG('photo-1638243384920-80b47f0f5c78'),
-    ],
-    hoverImage: IMG('photo-1533867610401-7625fa8c8de4'),
+    images: gallery('shoes'),
+    hoverImage: IMG('samples/ecommerce/shoes'),
     variants: [
       { size: '40', color: 'Brown', colorHex: '#8B4513', stock: 4 },
       { size: '42', color: 'Brown', colorHex: '#8B4513', stock: 3 },
@@ -320,12 +308,7 @@ export const products: Product[] = [
     priceUsd: 30,
     category: 'belts',
     material: 'top-grain',
-    images: [
-      IMG('photo-1624222247344-550fb60583fd', 600),
-      IMG('photo-1624222247344-550fb60583fd'),
-      IMG('photo-1553062407-98eeb64c6a62', 600),
-      IMG('photo-1590874103328-eac38a683ce7'),
-    ],
+    images: gallery('belts'),
     variants: [
       { size: '34', color: 'Brown/Black', colorHex: '#8B4513', stock: 7 },
       { size: '36', color: 'Brown/Black', colorHex: '#8B4513', stock: 5 },
@@ -348,13 +331,8 @@ export const products: Product[] = [
     priceUsd: 40,
     category: 'wallets',
     material: 'full-grain',
-    images: [
-      IMG('photo-1590874103328-eac38a683ce7'),
-      IMG('photo-1627123424574-724758594e93'),
-      IMG('photo-1606761568499-6d2451b23c66'),
-      IMG('photo-1590874103328-eac38a683ce7', 400),
-    ],
-    hoverImage: IMG('photo-1627123424574-724758594e93'),
+    images: gallery('wallets'),
+    hoverImage: IMG('samples/ecommerce/accessories-bag'),
     badge: 'last-one',
     featured: true,
     variants: [
@@ -369,6 +347,317 @@ export const products: Product[] = [
       shipping: 'Ships within 1 business day.',
     },
     createdAt: '2026-01-15',
+  },
+  {
+    id: '13',
+    slug: 'derby-brogue-shoes',
+    name: 'Derby Brogue Shoes',
+    description: 'Perforated brogue detailing on a classic derby last. A distinguished choice for formal events and boardroom meetings.',
+    price: 13200,
+    priceUsd: 115,
+    category: 'shoes',
+    material: 'full-grain',
+    images: gallery('shoes'),
+    hoverImage: IMG('samples/shoe'),
+    badge: 'bestseller',
+    featured: true,
+    variants: [
+      { size: '40', color: 'Brown', colorHex: '#8B4513', stock: 4 },
+      { size: '41', color: 'Brown', colorHex: '#8B4513', stock: 3 },
+      { size: '42', color: 'Black', colorHex: '#1A1A1A', stock: 2 },
+      { size: '43', color: 'Black', colorHex: '#1A1A1A', stock: 3 },
+    ],
+    details: {
+      materials: 'Full-grain leather upper with brogue perforations, leather welt, rubber heel cap.',
+      build: 'Goodyear welted, cushioned leather insole, hand-finished edges.',
+      sizing: 'True to size. EU 40–44 available.',
+      care: 'Polish weekly. Use shoe trees after each wear.',
+      shipping: '3–5 business days nationwide.',
+    },
+    createdAt: '2026-02-01',
+  },
+  {
+    id: '14',
+    slug: 'monk-strap-shoes',
+    name: 'Double Monk Strap Shoes',
+    description: 'Contemporary double monk strap shoes with a sleek silhouette. No laces, all style.',
+    price: 13800,
+    priceUsd: 120,
+    category: 'shoes',
+    material: 'full-grain',
+    images: gallery('shoes'),
+    hoverImage: IMG('samples/ecommerce/shoes'),
+    badge: 'new',
+    variants: [
+      { size: '41', color: 'Black', colorHex: '#1A1A1A', stock: 3 },
+      { size: '42', color: 'Black', colorHex: '#1A1A1A', stock: 4 },
+      { size: '43', color: 'Cognac', colorHex: '#A0522D', stock: 2 },
+    ],
+    details: {
+      materials: 'Full-grain leather, solid brass buckles, leather sole.',
+      build: 'Blake-stitched, pull tab, leather lining throughout.',
+      sizing: 'Runs true to size. Standard width.',
+      care: 'Condition buckles and leather monthly.',
+      shipping: '3–5 business days nationwide.',
+    },
+    createdAt: '2026-02-10',
+  },
+  {
+    id: '15',
+    slug: 'vintage-rider-jacket',
+    name: 'Vintage Rider Jacket',
+    description: 'Asymmetric zip motorcycle jacket with quilted shoulders. Built for riders and urban explorers alike.',
+    price: 34500,
+    priceUsd: 300,
+    category: 'jackets',
+    material: 'full-grain',
+    images: gallery('jackets'),
+    hoverImage: IMG('samples/man-on-a-street'),
+    badge: 'bestseller',
+    featured: true,
+    variants: [
+      { size: 'M', color: 'Black', colorHex: '#1A1A1A', stock: 2 },
+      { size: 'L', color: 'Black', colorHex: '#1A1A1A', stock: 3 },
+      { size: 'XL', color: 'Brown', colorHex: '#8B4513', stock: 1 },
+    ],
+    details: {
+      materials: 'Heavy full-grain leather, YKK asymmetric zipper, polyester quilt lining.',
+      build: 'Reinforced elbows, multiple zip pockets, belted hem.',
+      sizing: 'Snug fit. Size up for layering over sweaters.',
+      care: 'Professional leather cleaning once a year. Condition quarterly.',
+      shipping: 'Free delivery within Addis Ababa.',
+    },
+    createdAt: '2026-01-28',
+  },
+  {
+    id: '16',
+    slug: 'suede-trucker-jacket',
+    name: 'Suede Trucker Jacket',
+    description: 'Western-inspired trucker jacket in buttery suede. Lightweight with signature snap buttons.',
+    price: 26500,
+    priceUsd: 230,
+    category: 'jackets',
+    material: 'suede',
+    images: gallery('jackets'),
+    hoverImage: IMG('samples/outdoor-woman'),
+    badge: 'new',
+    variants: [
+      { size: 'S', color: 'Tan', colorHex: '#C4956A', stock: 2 },
+      { size: 'M', color: 'Tan', colorHex: '#C4956A', stock: 3 },
+      { size: 'L', color: 'Brown', colorHex: '#8B4513', stock: 2 },
+    ],
+    details: {
+      materials: 'Ethiopian suede, brushed cotton lining, antique brass snaps.',
+      build: 'Classic trucker cut, chest flap pockets, adjustable waist tabs.',
+      sizing: 'Regular fit. True to size.',
+      care: 'Use suede brush only. Avoid water. Professional cleaning recommended.',
+      shipping: '3–5 business days nationwide.',
+    },
+    createdAt: '2026-02-15',
+  },
+  {
+    id: '17',
+    slug: 'zip-around-wallet',
+    name: 'Zip-Around Wallet',
+    description: 'Secure zip-around design with 12 card slots and coin pocket. Keeps everything organized.',
+    price: 4200,
+    priceUsd: 37,
+    category: 'wallets',
+    material: 'full-grain',
+    images: gallery('wallets'),
+    hoverImage: IMG('samples/ecommerce/analog-classic'),
+    variants: [
+      { color: 'Black', colorHex: '#1A1A1A', stock: 9 },
+      { color: 'Brown', colorHex: '#8B4513', stock: 7 },
+      { color: 'Cognac', colorHex: '#A0522D', stock: 5 },
+    ],
+    details: {
+      materials: 'Full-grain leather exterior, YKK zip, RFID-blocking lining.',
+      build: '12 card slots, 2 bill compartments, zippered coin pocket.',
+      sizing: 'Dimensions: 12cm x 10cm x 2cm when closed.',
+      care: 'Wipe with dry cloth. Condition zip area lightly.',
+      shipping: 'Ships within 1–2 business days.',
+    },
+    createdAt: '2026-02-05',
+  },
+  {
+    id: '18',
+    slug: 'coin-purse-key-organizer',
+    name: 'Coin Purse & Key Organizer',
+    description: 'Compact coin purse with built-in key ring and card slot. Perfect everyday carry.',
+    price: 2200,
+    priceUsd: 19,
+    category: 'wallets',
+    material: 'top-grain',
+    images: gallery('wallets'),
+    hoverImage: IMG('samples/ecommerce/accessories-bag'),
+    badge: 'new',
+    variants: [
+      { color: 'Tan', colorHex: '#C4956A', stock: 14 },
+      { color: 'Black', colorHex: '#1A1A1A', stock: 11 },
+    ],
+    details: {
+      materials: 'Top-grain leather, solid brass key ring, snap closure.',
+      build: 'Coin compartment, 1 card slot, key ring attachment.',
+      sizing: 'Dimensions: 9cm x 7cm.',
+      care: 'Keep dry. Condition edges monthly.',
+      shipping: 'Ships within 1 business day.',
+    },
+    createdAt: '2026-02-18',
+  },
+  {
+    id: '19',
+    slug: 'leather-tote-bag',
+    name: 'Leather Tote Bag',
+    description: 'Oversized open-top tote for work or market days. Structured base keeps its shape.',
+    price: 16800,
+    priceUsd: 148,
+    category: 'bags',
+    material: 'full-grain',
+    images: gallery('bags'),
+    hoverImage: IMG('samples/ecommerce/leather-bag-gray'),
+    badge: 'bestseller',
+    featured: true,
+    variants: [
+      { color: 'Cognac', colorHex: '#A0522D', stock: 4 },
+      { color: 'Black', colorHex: '#1A1A1A', stock: 3 },
+      { color: 'Brown', colorHex: '#8B4513', stock: 2 },
+    ],
+    details: {
+      materials: 'Full-grain leather, reinforced base, cotton canvas lining.',
+      build: 'Open top, interior zip pocket, 2 slip pockets, long shoulder straps.',
+      sizing: 'Dimensions: 42cm x 35cm x 12cm.',
+      care: 'Condition handles monthly. Store stuffed to maintain shape.',
+      shipping: 'Free delivery within Addis Ababa.',
+    },
+    createdAt: '2026-02-08',
+  },
+  {
+    id: '20',
+    slug: 'leather-backpack',
+    name: 'Leather Backpack',
+    description: 'Roll-top leather backpack with padded laptop sleeve. Urban commuter essential.',
+    price: 19500,
+    priceUsd: 170,
+    category: 'bags',
+    material: 'full-grain',
+    images: gallery('bags'),
+    hoverImage: IMG('samples/ecommerce/accessories-bag'),
+    badge: 'new',
+    variants: [
+      { color: 'Brown', colorHex: '#8B4513', stock: 4 },
+      { color: 'Black', colorHex: '#1A1A1A', stock: 3 },
+    ],
+    details: {
+      materials: 'Full-grain leather body, brass buckles, padded back panel.',
+      build: 'Fits 14" laptop, roll-top closure, front zip pocket, adjustable straps.',
+      sizing: 'Capacity: 22L. Dimensions: 45cm x 30cm x 15cm.',
+      care: 'Avoid prolonged rain. Condition monthly.',
+      shipping: '3–5 business days nationwide.',
+    },
+    createdAt: '2026-02-20',
+  },
+  {
+    id: '21',
+    slug: 'braided-leather-belt',
+    name: 'Braided Leather Belt',
+    description: 'Hand-braided leather belt with a vintage brass buckle. Adds texture to any outfit.',
+    price: 3800,
+    priceUsd: 33,
+    category: 'belts',
+    material: 'full-grain',
+    images: gallery('belts'),
+    hoverImage: IMG('samples/ecommerce/accessories-bag'),
+    variants: [
+      { size: '32', color: 'Brown', colorHex: '#8B4513', stock: 5 },
+      { size: '34', color: 'Brown', colorHex: '#8B4513', stock: 4 },
+      { size: '36', color: 'Tan', colorHex: '#C4956A', stock: 3 },
+    ],
+    details: {
+      materials: 'Braided full-grain leather strips, vintage brass buckle.',
+      build: 'Hand-braided, 3.5cm width, 5 adjustment holes.',
+      sizing: 'Add 5cm to waist measurement for correct fit.',
+      care: 'Condition lightly. Do not fold or crease.',
+      shipping: 'Ships within 1–2 business days.',
+    },
+    createdAt: '2026-02-12',
+  },
+  {
+    id: '22',
+    slug: 'leather-keychain',
+    name: 'Leather Keychain',
+    description: 'Hand-stitched key fob with sturdy snap hook. A small luxury for everyday carry.',
+    price: 950,
+    priceUsd: 8,
+    category: 'accessories',
+    material: 'full-grain',
+    images: gallery('accessories'),
+    hoverImage: IMG('samples/ecommerce/analog-classic'),
+    variants: [
+      { color: 'Brown', colorHex: '#8B4513', stock: 20 },
+      { color: 'Black', colorHex: '#1A1A1A', stock: 18 },
+      { color: 'Tan', colorHex: '#C4956A', stock: 15 },
+    ],
+    details: {
+      materials: 'Full-grain leather loop, solid brass snap hook.',
+      build: 'Hand-stitched, debossed Brana logo, split ring included.',
+      sizing: 'Loop length: 10cm.',
+      care: 'Wipe clean. Condition occasionally.',
+      shipping: 'Ships within 1 business day.',
+    },
+    createdAt: '2026-02-22',
+  },
+  {
+    id: '23',
+    slug: 'handcrafted-watch-strap',
+    name: 'Handcrafted Watch Strap',
+    description: 'Replacement leather watch strap with quick-release pins. Fits standard lug widths.',
+    price: 2800,
+    priceUsd: 25,
+    category: 'accessories',
+    material: 'full-grain',
+    images: gallery('accessories'),
+    hoverImage: IMG('samples/ecommerce/accessories-bag'),
+    badge: 'bestseller',
+    variants: [
+      { size: '20mm', color: 'Brown', colorHex: '#8B4513', stock: 8 },
+      { size: '22mm', color: 'Brown', colorHex: '#8B4513', stock: 6 },
+      { size: '22mm', color: 'Black', colorHex: '#1A1A1A', stock: 7 },
+    ],
+    details: {
+      materials: 'Full-grain leather, stainless steel buckle, quick-release spring bars.',
+      build: 'Hand-stitched, padded profile, available in 20mm and 22mm.',
+      sizing: 'Measure lug width of your watch. Standard lengths included.',
+      care: 'Rotate straps. Condition to prevent cracking.',
+      shipping: 'Ships within 1–2 business days.',
+    },
+    createdAt: '2026-02-14',
+  },
+  {
+    id: '24',
+    slug: 'artisan-leather-gloves',
+    name: 'Artisan Leather Gloves',
+    description: 'Unlined driving gloves in soft lambskin-touch leather. Touchscreen-compatible fingertips.',
+    price: 5200,
+    priceUsd: 45,
+    category: 'accessories',
+    material: 'nubuck',
+    images: gallery('accessories'),
+    hoverImage: IMG('samples/ecommerce/analog-classic'),
+    badge: 'last-one',
+    featured: true,
+    variants: [
+      { size: 'M', color: 'Brown', colorHex: '#8B4513', stock: 1 },
+      { size: 'L', color: 'Black', colorHex: '#1A1A1A', stock: 3 },
+    ],
+    details: {
+      materials: 'Nubuck leather, elastic wrist, touchscreen-compatible index and thumb.',
+      build: 'Unlined for dexterity, hand-cut pattern, reinforced seams.',
+      sizing: 'Measure around knuckles: M (19cm), L (21cm).',
+      care: 'Brush with suede/nubuck brush. Avoid water.',
+      shipping: 'Ships within 1–2 business days.',
+    },
+    createdAt: '2026-02-25',
   },
 ];
 

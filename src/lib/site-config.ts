@@ -98,11 +98,6 @@ export function whatsappUrl(message?: string, number = siteConfig.social.whatsap
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
-export function instagramHandleDisplay(handle = siteConfig.social.instagram) {
-  const clean = handle.replace(/^@/, '');
-  return `@${clean}`;
-}
-
 export function paymentMethodLabel(method: PaymentMethod): string {
   return PAYMENT_METHOD_OPTIONS.find((m) => m.id === method)?.label ?? method;
 }

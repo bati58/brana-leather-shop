@@ -4,7 +4,7 @@ import { products } from '@/lib/products';
 import { formatPrice } from '@/lib/utils';
 
 export default function ProductMarquee() {
-  const showcase = products.slice(0, 10);
+  const showcase = products.slice(0, 16);
   const loopItems = [...showcase, ...showcase];
 
   return (

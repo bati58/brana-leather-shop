@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { testimonials } from '@/lib/products';
-import { instagramUrl, instagramHandleDisplay } from '@/lib/site-config';
+import { instagramUrl, siteConfig } from '@/lib/site-config';
 
 export default function Testimonials() {
   const [active, setActive] = useState(0);
@@ -72,7 +72,7 @@ export default function Testimonials() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-brand-gold hover:text-brand-tan transition-colors font-body font-medium"
           >
-            {instagramHandleDisplay()} on Instagram
+            Follow {siteConfig.name} on Instagram
           </a>
         </div>
       </div>

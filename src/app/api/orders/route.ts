@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       subtotal: order.subtotal,
       shipping: order.shipping,
       total: order.total,
+      createdAt: orderRecord.createdAt,
     });
 
     return NextResponse.json({
