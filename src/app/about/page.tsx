@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { MapPin, Phone, Clock } from 'lucide-react';
 import AboutContactForm from './AboutContactForm';
+import { siteConfig } from '@/lib/site-config';
 
 export const metadata: Metadata = {
   title: 'Our Story — About Brana Leather',
@@ -124,17 +125,18 @@ export default function AboutPage() {
                 <MapPin size={20} className="text-brand-gold mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-body text-brand-dark font-medium">Address</p>
-                  <p className="text-brand-gray font-body text-sm">
-                    Bishoftu (Seven Lake City), Ethiopia
-                  </p>
+                  <p className="text-brand-gray font-body text-sm">{siteConfig.address}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone size={20} className="text-brand-gold mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-body text-brand-dark font-medium">Phone</p>
-                  <a href="tel:+251989977058" className="text-brand-gray font-body text-sm hover:text-brand-gold">
-                    0989977058
+                  <a
+                    href={`tel:+${siteConfig.social.whatsapp.replace(/\D/g, '')}`}
+                    className="text-brand-gray font-body text-sm hover:text-brand-gold"
+                  >
+                    {siteConfig.phone}
                   </a>
                 </div>
               </div>
@@ -143,8 +145,9 @@ export default function AboutPage() {
                 <div>
                   <p className="font-body text-brand-dark font-medium">Store Hours</p>
                   <p className="text-brand-gray font-body text-sm">
-                    Mon–Sat: 9:00 AM – 6:00 PM<br />
-                    Sunday: Closed
+                    {siteConfig.storeHours.weekdays}
+                    <br />
+                    {siteConfig.storeHours.sunday}
                   </p>
                 </div>
               </div>

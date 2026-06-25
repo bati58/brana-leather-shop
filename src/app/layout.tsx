@@ -3,6 +3,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CookieConsent from '@/components/layout/CookieConsent';
 import { ToastProvider } from '@/components/ui/ToastProvider';
+import Analytics from '@/components/layout/Analytics';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <Analytics />
         <ToastProvider>
           <Navbar />
           <main className="min-h-screen">{children}</main>

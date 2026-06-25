@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Brana Leather app icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#161616" />
+      <stop offset="100%" stop-color="#1F1F1F" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D0A242" />
+      <stop offset="100%" stop-color="#B8860B" />
+    </linearGradient>
+  </defs>
+
+  <rect x="6" y="6" width="168" height="168" rx="36" fill="url(#bg)" />
+  <rect x="6" y="6" width="168" height="168" rx="36" fill="none" stroke="url(#gold)" stroke-width="7" />
+
+  <path
+    d="M63 40h35c21 0 35 12 35 30c0 14-8 24-22 28c14 4 24 15 24 30c0 20-16 34-39 34H63zm20 18v33h14c10 0 16-6 16-16c0-11-6-17-16-17zm0 50v37h16c11 0 18-7 18-18c0-12-7-19-18-19z"
+    fill="url(#gold)"
+  />
+</svg>

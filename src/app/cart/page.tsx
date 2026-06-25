@@ -5,12 +5,13 @@ import Image from 'next/image';
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import { formatPrice } from '@/lib/utils';
+import { calculateShipping, siteConfig } from '@/lib/site-config';
 import Button from '@/components/ui/Button';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getSubtotal, clearCart } = useCartStore();
   const subtotal = getSubtotal();
-  const shipping = subtotal > 10000 ? 0 : 500;
+  const shipping = calculateShipping(subtotal, 'delivery');
   const total = subtotal + shipping;
 
   if (items.length === 0) {
@@ -103,9 +104,9 @@ export default function CartPage() {
                 {shipping === 0 ? 'Free' : formatPrice(shipping)}
               </span>
             </div>
-            {subtotal < 10000 && (
+            {subtotal < siteConfig.shipping.freeThreshold && (
               <p className="text-xs text-brand-gray">
-                Free shipping on orders over {formatPrice(10000)}
+                Free shipping on orders over {formatPrice(siteConfig.shipping.freeThreshold)}
               </p>
             )}
             <div className="flex justify-between font-display text-xl pt-3 border-t border-brand-dark/10">

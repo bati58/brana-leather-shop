@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { siteConfig } from '@/lib/site-config';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -30,7 +31,7 @@ export default function PrivacyPage() {
           </section>
           <section>
             <h2 className="font-display text-xl text-brand-dark mb-3">Contact</h2>
-            <p>For privacy-related questions, contact us at hello@branaleather.com or call 0989977058.</p>
+            <p>For privacy-related questions, contact us at {siteConfig.email} or call {siteConfig.phone}.</p>
           </section>
         </div>
       </div>

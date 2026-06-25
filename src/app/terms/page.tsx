@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { siteConfig } from '@/lib/site-config';
+import { formatPrice } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
@@ -14,7 +16,7 @@ export default function TermsPage() {
           <p>Last updated: June 2026</p>
           <section>
             <h2 className="font-display text-xl text-brand-dark mb-3">Orders & Payment</h2>
-            <p>All prices are listed in Ethiopian Birr (ETB). International prices in USD are approximate. Payment is required at checkout via Chapa, Telebirr, CBE Birr, cash on delivery, or Stripe for international orders.</p>
+            <p>All prices are listed in Ethiopian Birr (ETB). International prices in USD are approximate where shown. Payment is accepted via Telebirr, CBE Birr, and cash on delivery. Additional methods may be enabled in future.</p>
           </section>
           <section>
             <h2 className="font-display text-xl text-brand-dark mb-3">Return Policy</h2>
@@ -22,7 +24,11 @@ export default function TermsPage() {
           </section>
           <section>
             <h2 className="font-display text-xl text-brand-dark mb-3">Shipping</h2>
-            <p>Delivery times: Addis Ababa 1–2 business days, major cities 3–5 days, other areas 5–7 days. Free shipping on orders over ETB 10,000 within Ethiopia. International shipping rates vary by destination.</p>
+            <p>
+              Domestic delivery: {siteConfig.shipping.domesticEta}. Store pickup in Bishoftu: {siteConfig.shipping.pickupEta}.
+              Free shipping on orders over {formatPrice(siteConfig.shipping.freeThreshold)} within Ethiopia.
+              Standard delivery fee: {formatPrice(siteConfig.shipping.standardFee)}.
+            </p>
           </section>
           <section>
             <h2 className="font-display text-xl text-brand-dark mb-3">Product Authenticity</h2>
@@ -30,7 +36,7 @@ export default function TermsPage() {
           </section>
           <section>
             <h2 className="font-display text-xl text-brand-dark mb-3">Contact</h2>
-            <p>Brana Leather, Bishoftu (Seven Lake City), Ethiopia. Phone: 0989977058. Email: hello@branaleather.com</p>
+            <p>{siteConfig.name}, {siteConfig.address}. Phone: {siteConfig.phone}. Email: {siteConfig.email}</p>
           </section>
         </div>
       </div>

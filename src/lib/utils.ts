@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { siteConfig, whatsappUrl } from '@/lib/site-config';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -26,15 +27,9 @@ export function generateOrderId(): string {
   return `BL-${timestamp}-${random}`;
 }
 
-export function getWhatsAppOrderUrl(
-  productName: string,
-  price: number,
-  phone = '0989977058'
-): string {
-  const message = encodeURIComponent(
-    `Hello Brana Leather! I'd like to order: ${productName} (${formatPrice(price)}). Please share availability and payment details.`
-  );
-  return `https://wa.me/251${phone.replace(/^0/, '')}?text=${message}`;
+export function getWhatsAppOrderUrl(productName: string, price: number): string {
+  const message = `Hello Brana Leather! I'd like to order: ${productName} (${formatPrice(price)}). Please share availability and payment details.`;
+  return whatsappUrl(message, siteConfig.social.whatsapp);
 }
 
 export function slugify(text: string): string {

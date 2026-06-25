@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-
-const orders: unknown[] = [];
+import { sendOrderEmails } from '@/lib/email';
+import { saveOrder } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -16,21 +16,44 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    orders.push(orderRecord);
+    const savedToDb = await saveOrder({
+      id: order.id,
+      customer: order.customer,
+      items: order.items,
+      deliveryMethod: order.deliveryMethod,
+      paymentMethod: order.paymentMethod,
+      subtotal: order.subtotal,
+      shipping: order.shipping,
+      total: order.total,
+      status: 'pending',
+    });
 
-    // In production: save to Supabase, send confirmation email via Mailchimp/SendGrid
-    console.log('New order received:', orderRecord.id);
+    await sendOrderEmails({
+      id: order.id,
+      customer: order.customer,
+      items: order.items,
+      deliveryMethod: order.deliveryMethod,
+      paymentMethod: order.paymentMethod,
+      subtotal: order.subtotal,
+      shipping: order.shipping,
+      total: order.total,
+    });
 
     return NextResponse.json({
       success: true,
       orderId: order.id,
+      persisted: savedToDb,
       message: 'Order placed successfully',
     });
-  } catch {
+  } catch (error) {
+    console.error('[orders] Failed:', error);
     return NextResponse.json({ error: 'Failed to process order' }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ orders: orders.length });
+  return NextResponse.json({
+    message: 'Orders API — POST to create an order',
+    supabase: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+  });
 }

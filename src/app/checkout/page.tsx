@@ -10,17 +10,13 @@ import { formatPrice, generateOrderId } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/ToastProvider';
+import { whatsappUrl, getActivePaymentMethods, getActivePaymentBadges, calculateShipping } from '@/lib/site-config';
 import type { DeliveryMethod, PaymentMethod } from '@/types';
 
 const STEPS = ['Cart', 'Details', 'Delivery', 'Payment'];
 
-const paymentMethods: { id: PaymentMethod; label: string; description: string }[] = [
-  { id: 'chapa', label: 'Chapa', description: 'Pay with mobile money, bank transfer, or card' },
-  { id: 'telebirr', label: 'Telebirr', description: 'Ethio Telecom mobile wallet' },
-  { id: 'cbe', label: 'CBE Birr', description: 'Commercial Bank of Ethiopia' },
-  { id: 'cod', label: 'Cash on Delivery', description: 'Pay when you receive your order' },
-  { id: 'stripe', label: 'Stripe (International)', description: 'Visa, Mastercard for international orders' },
-];
+const activePaymentMethods = getActivePaymentMethods();
+const defaultPayment = (activePaymentMethods[0]?.id ?? 'cod') as PaymentMethod;
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -39,20 +35,25 @@ export default function CheckoutPage() {
     city: 'Addis Ababa',
   });
   const [delivery, setDelivery] = useState<DeliveryMethod>('delivery');
-  const [payment, setPayment] = useState<PaymentMethod>('chapa');
+  const [payment, setPayment] = useState<PaymentMethod>(defaultPayment);
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   const subtotal = getSubtotal();
-  const shipping = delivery === 'pickup' ? 0 : subtotal > 10000 ? 0 : 500;
+  const shipping = calculateShipping(subtotal, delivery);
   const total = subtotal + shipping;
 
   useEffect(() => {
     setIsHydrated(true);
     const params = new URLSearchParams(window.location.search);
     const order = params.get('order');
+    const paymentParam = params.get('payment');
+    const statusParam = params.get('status');
     if (order) {
       setOrderId(order);
       setStep(4);
     }
+    if (paymentParam) setPayment(paymentParam as PaymentMethod);
+    if (statusParam) setPaymentStatus(statusParam);
   }, []);
 
   const isConfirmation = step === 4 || !!orderId;
@@ -152,12 +153,16 @@ export default function CheckoutPage() {
             Order number: <span className="font-display text-brand-gold">{orderId}</span>
           </p>
           <p className="text-brand-gray font-body mb-2">
-            Thank you for your order. We&apos;ll process it right away and send updates as it moves through delivery.
+            {paymentStatus === 'pending' && payment !== 'cod'
+              ? 'Your order is saved. Complete payment via your selected mobile wallet when prompted, or contact us on WhatsApp if you need help.'
+              : payment === 'cod'
+                ? 'Your cash-on-delivery order is confirmed. Please have the exact amount ready at delivery or pickup.'
+                : 'Thank you for your order. We will process it right away and send updates as it moves through delivery.'}
           </p>
           <a
-            href={`https://wa.me/251989977058?text=${encodeURIComponent(
+            href={whatsappUrl(
               `Hi Brana Leather! I just placed order ${orderId}. Please confirm status and next steps.`
-            )}`}
+            )}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-4 text-brand-gold hover:text-brand-tan font-body text-sm"
@@ -274,7 +279,7 @@ export default function CheckoutPage() {
             {step === 3 && (
               <div className="bg-white rounded-lg border border-brand-dark/5 p-6 space-y-4">
                 <h2 className="font-display text-xl text-brand-dark mb-4">Payment Method</h2>
-                {paymentMethods.map((method) => (
+                {activePaymentMethods.map((method) => (
                   <label
                     key={method.id}
                     className={`flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -323,7 +328,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
-                {['Chapa', 'Telebirr', 'Visa'].map((badge) => (
+                {getActivePaymentBadges().map((badge) => (
                   <span key={badge} className="px-2 py-1 text-xs border border-brand-dark/10 rounded text-brand-gray">
                     {badge}
                   </span>

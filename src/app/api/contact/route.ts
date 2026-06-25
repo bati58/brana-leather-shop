@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { sendContactNotification } from '@/lib/email';
+import { saveContactMessage } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -8,11 +10,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
     }
 
-    // In production: send email notification, save to Supabase
-    console.log('Contact form submission:', { name, email, message: message.substring(0, 50) });
+    await saveContactMessage({ name, email, message });
+    await sendContactNotification({ name, email, message });
 
     return NextResponse.json({ success: true, message: 'Message sent successfully' });
-  } catch {
+  } catch (error) {
+    console.error('[contact] Failed:', error);
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
   }
 }

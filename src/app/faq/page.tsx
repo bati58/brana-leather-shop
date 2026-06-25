@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Accordion from '@/components/ui/Accordion';
 import { faqs } from '@/lib/products';
+import { whatsappUrl } from '@/lib/site-config';
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions',
@@ -31,7 +32,7 @@ export default function FAQPage() {
         <div className="mt-12 text-center">
           <p className="text-brand-gray font-body mb-2">Still have questions?</p>
           <a
-            href="https://wa.me/251989977058"
+            href={whatsappUrl('Hi Brana Leather! I have a question about your products.')}
             target="_blank"
             rel="noopener noreferrer"
             className="text-brand-gold hover:text-brand-tan font-body font-medium transition-colors"

@@ -1,39 +1,45 @@
 import { NextResponse } from 'next/server';
+import { getActivePaymentMethods } from '@/lib/site-config';
+import type { PaymentMethod } from '@/types';
+
+const ALLOWED = () => new Set(getActivePaymentMethods().map((m) => m.id));
 
 export async function POST(request: Request) {
   try {
     const { amount, email, firstName, lastName, phone, orderId, paymentMethod } =
       await request.json();
 
+    const payment = paymentMethod as PaymentMethod;
+    const allowed = ALLOWED();
+
+    if (!allowed.has(payment)) {
+      return NextResponse.json({ error: 'Payment method not available' }, { status: 400 });
+    }
+
+    if (payment === 'cod') {
+      return NextResponse.json({
+        success: true,
+        checkout_url: `/checkout?order=${orderId}&payment=cod`,
+      });
+    }
+
     const chapaSecretKey = process.env.CHAPA_SECRET_KEY;
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
-    const demoCheckoutUrl = `/checkout?order=${orderId}&payment=demo`;
-
-    if (!chapaSecretKey || !siteUrl) {
+    if (!chapaSecretKey) {
       return NextResponse.json({
         success: true,
-        checkout_url: demoCheckoutUrl,
-        message: 'Chapa not configured — demo mode active',
+        checkout_url: `/checkout?order=${orderId}&payment=${payment}&status=pending`,
+        message:
+          'Chapa key not set — order saved. Add CHAPA_SECRET_KEY to enable live Telebirr/CBE checkout.',
       });
     }
 
-    const payment = paymentMethod || 'chapa';
-
-    // COD & Stripe are handled as demo in this prototype (Stripe requires extra setup).
-    if (payment === 'cod' || payment === 'stripe') {
-      return NextResponse.json({
-        success: true,
-        checkout_url: `/checkout?order=${orderId}&payment=${payment}`,
-      });
-    }
-
-    // Local payments: use Chapa direct charges for Telebirr / CBE Birr.
     if (payment === 'telebirr' || payment === 'cbe') {
       const type = payment === 'telebirr' ? 'telebirr' : 'cbebirr';
 
       if (!phone) {
-        return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
+        return NextResponse.json({ error: 'Phone number is required for mobile payment' }, { status: 400 });
       }
 
       const formData = new FormData();
@@ -49,9 +55,7 @@ export async function POST(request: Request) {
         `https://api.chapa.co/v1/charges?type=${encodeURIComponent(type)}`,
         {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${chapaSecretKey}`,
-          },
+          headers: { Authorization: `Bearer ${chapaSecretKey}` },
           body: formData,
         }
       );
@@ -66,46 +70,12 @@ export async function POST(request: Request) {
       }
 
       return NextResponse.json(
-        {
-          error: data?.message || 'Payment initialization failed',
-        },
+        { error: data?.message || 'Payment initialization failed' },
         { status: 400 }
       );
     }
 
-    // Default: Chapa transaction initialize flow.
-    const response = await fetch('https://api.chapa.co/v1/transaction/initialize', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${chapaSecretKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        amount,
-        currency: 'ETB',
-        email,
-        first_name: firstName,
-        last_name: lastName,
-        tx_ref: orderId,
-        callback_url: `${siteUrl}/checkout?order=${orderId}`,
-        return_url: `${siteUrl}/checkout?order=${orderId}`,
-        customization: {
-          title: 'Brana Leather',
-          description: `Order ${orderId}`,
-        },
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.status === 'success') {
-      return NextResponse.json({
-        success: true,
-        checkout_url: data.data.checkout_url,
-      });
-    }
-
-    return NextResponse.json({ error: 'Payment initialization failed' }, { status: 400 });
+    return NextResponse.json({ error: 'Unsupported payment method' }, { status: 400 });
   } catch {
     return NextResponse.json({ error: 'Payment service unavailable' }, { status: 500 });
   }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { testimonials } from '@/lib/products';
+import { instagramUrl, instagramHandleDisplay } from '@/lib/site-config';
 
 export default function Testimonials() {
   const [active, setActive] = useState(0);
@@ -66,12 +67,12 @@ export default function Testimonials() {
         <div className="mt-16 text-center">
           <p className="text-brand-gray font-body text-sm mb-4">Follow our journey</p>
           <a
-            href="https://instagram.com/branalethr"
+            href={instagramUrl()}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-brand-gold hover:text-brand-tan transition-colors font-body font-medium"
           >
-            @branalethr on Instagram
+            {instagramHandleDisplay()} on Instagram
           </a>
         </div>
       </div>

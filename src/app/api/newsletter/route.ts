@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-
-const subscribers: { name: string; email: string; whatsapp?: string; createdAt: string }[] = [];
+import { saveSubscriber } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -10,18 +9,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    subscribers.push({
+    const saved = await saveSubscriber({
       name: name || '',
       email,
       whatsapp: whatsapp || '',
-      createdAt: new Date().toISOString(),
     });
 
-    // In production: save to Supabase/Mailchimp
-    console.log('Newsletter signup:', email);
+    if (!saved && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.log('[newsletter] Signup (dev):', email);
+    }
 
     return NextResponse.json({ success: true, message: 'Subscribed successfully' });
-  } catch {
+  } catch (error) {
+    console.error('[newsletter] Failed:', error);
     return NextResponse.json({ error: 'Subscription failed' }, { status: 500 });
   }
 }

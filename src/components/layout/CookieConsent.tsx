@@ -16,6 +16,7 @@ export default function CookieConsent() {
 
   const accept = () => {
     localStorage.setItem('brana-cookie-consent', 'accepted');
+    window.dispatchEvent(new Event('brana-cookie-consent'));
     setShow(false);
   };
 
