@@ -7,6 +7,7 @@ import Modal from '@/components/ui/Modal';
 import { useCartStore } from '@/store/cartStore';
 import { useToast } from '@/components/ui/ToastProvider';
 import { formatPrice, getWhatsAppOrderUrl } from '@/lib/utils';
+import { SUBCATEGORY_LABELS } from '@/lib/categories';
 import { cn } from '@/lib/utils';
 import type { Product } from '@/types';
 
@@ -49,6 +50,9 @@ export default function AddToCart({ product }: AddToCartProps) {
   return (
     <div className="space-y-6">
       <div>
+        <p className="text-brand-gold text-xs font-body uppercase tracking-[0.15em] mb-2">
+          {SUBCATEGORY_LABELS[product.subcategory]}
+        </p>
         <h1 className="font-display text-3xl sm:text-4xl text-brand-dark mb-2">{product.name}</h1>
         <div className="flex items-baseline gap-3">
           <p className="font-display text-2xl text-brand-gold">{formatPrice(product.price)}</p>
@@ -152,7 +156,7 @@ export default function AddToCart({ product }: AddToCartProps) {
 
       <Modal isOpen={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} title="Size Guide">
         <div className="space-y-4 font-body text-sm text-brand-gray">
-          {product.category === 'shoes' ? (
+          {product.category === 'footwear' ? (
             <table className="w-full">
               <thead>
                 <tr className="border-b">
@@ -178,7 +182,7 @@ export default function AddToCart({ product }: AddToCartProps) {
                 ))}
               </tbody>
             </table>
-          ) : product.category === 'jackets' ? (
+          ) : product.subcategory === 'leather-jackets' || product.subcategory === 'leather-vests' ? (
             <table className="w-full">
               <thead>
                 <tr className="border-b">

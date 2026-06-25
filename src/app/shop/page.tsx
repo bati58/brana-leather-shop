@@ -13,6 +13,7 @@ function ShopContent() {
 
   const [filters, setFilters] = useState<FilterState>({
     categories: [],
+    subcategories: [],
     priceRange: PRICE_RANGE,
     materials: [],
     sizes: [],
@@ -70,6 +71,7 @@ function ShopContent() {
                   onClick={() =>
                     setFilters({
                       categories: [],
+                      subcategories: [],
                       priceRange: PRICE_RANGE,
                       materials: [],
                       sizes: [],

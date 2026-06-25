@@ -1,4 +1,49 @@
-export type Category = 'shoes' | 'jackets' | 'wallets' | 'bags' | 'belts' | 'accessories';
+export type Category =
+  | 'bags'
+  | 'footwear'
+  | 'belts'
+  | 'small-leather-goods'
+  | 'clothing-accessories'
+  | 'home-office'
+  | 'gifts';
+
+export type Subcategory =
+  | 'shoulder-bags'
+  | 'handbags-purses'
+  | 'tote-bags'
+  | 'crossbody-bags'
+  | 'backpacks'
+  | 'laptop-briefcases'
+  | 'travel-duffel-bags'
+  | 'clutch-bags'
+  | 'mens-dress-shoes'
+  | 'womens-heels-flats'
+  | 'sandals'
+  | 'loafers'
+  | 'boots'
+  | 'moccasins'
+  | 'mens-formal-belts'
+  | 'mens-casual-belts'
+  | 'womens-belts'
+  | 'wide-fashion-belts'
+  | 'bifold-trifold-wallets'
+  | 'card-holders'
+  | 'coin-purses'
+  | 'passport-holders'
+  | 'keychains'
+  | 'leather-jackets'
+  | 'leather-vests'
+  | 'caps-hats'
+  | 'gloves'
+  | 'watch-straps'
+  | 'notebook-covers'
+  | 'desk-accessories'
+  | 'coasters'
+  | 'photo-frames'
+  | 'cushion-covers'
+  | 'engraved-wallets'
+  | 'gift-sets'
+  | 'personalized-bags';
 
 export type Material = 'full-grain' | 'top-grain' | 'suede' | 'nubuck';
 
@@ -17,6 +62,7 @@ export interface Product {
   price: number;
   priceUsd?: number;
   category: Category;
+  subcategory: Subcategory;
   material: Material;
   images: string[];
   hoverImage?: string;
@@ -85,6 +131,7 @@ export interface FAQ {
 
 export interface FilterState {
   categories: Category[];
+  subcategories: Subcategory[];
   priceRange: [number, number];
   materials: Material[];
   sizes: string[];

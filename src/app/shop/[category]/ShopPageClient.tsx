@@ -9,6 +9,7 @@ import type { FilterState, SortOption, Category, Product } from '@/types';
 interface ShopPageClientProps {
   initialCategory: Category;
   categoryLabel: string;
+  categoryDescription?: string;
   productCount: number;
   products: Product[];
 }
@@ -16,9 +17,11 @@ interface ShopPageClientProps {
 export default function ShopPageClient({
   initialCategory,
   categoryLabel,
+  categoryDescription,
 }: ShopPageClientProps) {
   const [filters, setFilters] = useState<FilterState>({
     categories: [initialCategory],
+    subcategories: [],
     priceRange: PRICE_RANGE,
     materials: [],
     sizes: [],
@@ -38,13 +41,21 @@ export default function ShopPageClient({
           <h1 className="font-display text-3xl sm:text-4xl text-brand-dark mb-2">
             {categoryLabel}
           </h1>
-          <p className="text-brand-gray font-body">
+          {categoryDescription && (
+            <p className="text-brand-gray font-body max-w-2xl mb-2">{categoryDescription}</p>
+          )}
+          <p className="text-brand-gray font-body text-sm">
             {products.length} handcrafted piece{products.length !== 1 ? 's' : ''}
           </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          <FilterPanel filters={filters} onChange={setFilters} productCount={products.length} />
+          <FilterPanel
+            filters={filters}
+            onChange={setFilters}
+            productCount={products.length}
+            activeCategory={initialCategory}
+          />
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">
               <ActiveFilters filters={filters} onChange={setFilters} />

@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import { useCartStore } from '@/store/cartStore';
 import { useToast } from '@/components/ui/ToastProvider';
 import { formatPrice } from '@/lib/utils';
+import { SUBCATEGORY_LABELS } from '@/lib/categories';
 import Badge from '@/components/ui/Badge';
 import type { Product } from '@/types';
 
@@ -41,6 +42,9 @@ export default function ProductCard({ product, showQuickAdd = true }: ProductCar
     showToast(`${product.name} added to cart`);
   };
 
+  const hoverSrc =
+    product.images[1] && product.images[1] !== product.images[0] ? product.images[1] : null;
+
   return (
     <Link href={`/product/${product.slug}`} className="group block">
       <article className="bg-white rounded-lg overflow-hidden border border-brand-dark/5 transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1">
@@ -52,10 +56,10 @@ export default function ProductCard({ product, showQuickAdd = true }: ProductCar
             className="object-cover transition-opacity duration-300 group-hover:opacity-0"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
-          {product.hoverImage && (
+          {hoverSrc && (
             <Image
-              src={product.hoverImage}
-              alt={`${product.name} lifestyle shot`}
+              src={hoverSrc}
+              alt={`${product.name} — alternate view`}
               fill
               className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -77,6 +81,9 @@ export default function ProductCard({ product, showQuickAdd = true }: ProductCar
           )}
         </div>
         <div className="p-4">
+          <p className="text-xs text-brand-gray font-body mb-1 line-clamp-1">
+            {SUBCATEGORY_LABELS[product.subcategory]}
+          </p>
           <h3 className="font-display text-base text-brand-dark group-hover:text-brand-gold transition-colors line-clamp-1">
             {product.name}
           </h3>

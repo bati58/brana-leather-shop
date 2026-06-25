@@ -3,15 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { instagramUrl, siteConfig } from '@/lib/site-config';
-
-const placeholderPosts = [
-  'photo-1611930022073-bf02e42f1f2a',
-  'photo-1520975869011-6a7f9be6dbd7',
-  'photo-1520975916093-0df45c780c64',
-  'photo-1521223260152-fd5e720b0142',
-  'photo-1551028719-00167b16eac5',
-  'photo-1627123424574-724758594e93',
-];
+import { instagramFeedImages } from '@/lib/marketing-images';
 
 const igUrl = instagramUrl();
 
@@ -42,9 +34,9 @@ export default function InstagramFeed() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {placeholderPosts.slice(0, 6).map((id, i) => (
+          {instagramFeedImages.map((src, i) => (
             <a
-              key={id}
+              key={src}
               href={igUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -52,8 +44,8 @@ export default function InstagramFeed() {
               aria-label={`View ${siteConfig.name} on Instagram`}
             >
               <Image
-                src={`https://images.unsplash.com/${id}?w=700&q=80&fit=crop`}
-                alt="Brana Leather Instagram preview"
+                src={src}
+                alt={`Brana Leather workshop and style ${i + 1}`}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"

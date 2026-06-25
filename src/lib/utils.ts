@@ -39,14 +39,7 @@ export function slugify(text: string): string {
     .replace(/\s+/g, '-');
 }
 
-export const CATEGORY_LABELS: Record<string, string> = {
-  shoes: 'Shoes',
-  jackets: 'Jackets',
-  wallets: 'Wallets & Bags',
-  bags: 'Bags',
-  belts: 'Belts',
-  accessories: 'Accessories',
-};
+export { CATEGORY_LABELS, SUBCATEGORY_LABELS } from '@/lib/categories';
 
 export const MATERIAL_LABELS: Record<string, string> = {
   'full-grain': 'Full Grain Leather',

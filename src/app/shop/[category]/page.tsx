@@ -1,26 +1,36 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import ShopPageClient from './ShopPageClient';
 import { CATEGORY_LABELS } from '@/lib/utils';
+import { getCategoryDef, LEGACY_CATEGORY_REDIRECTS } from '@/lib/categories';
 import { getProductsByCategory, categoryCounts } from '@/lib/products';
 import type { Category } from '@/types';
 
-const validCategories: Category[] = ['shoes', 'jackets', 'wallets', 'bags', 'belts', 'accessories'];
-
 export function generateStaticParams() {
-  return validCategories.map((category) => ({ category }));
+  return Object.keys(CATEGORY_LABELS).map((category) => ({ category }));
 }
 
 export function generateMetadata({ params }: { params: { category: string } }): Metadata {
-  const label = CATEGORY_LABELS[params.category] || params.category;
+  const legacy = LEGACY_CATEGORY_REDIRECTS[params.category];
+  const slug = (legacy ?? params.category) as Category;
+  const def = getCategoryDef(slug);
+  const label = def?.label ?? params.category;
   return {
     title: `${label} — Shop Handcrafted Leather`,
-    description: `Browse our ${label.toLowerCase()} collection. Premium handcrafted leather ${params.category} from Bishoftu, Ethiopia.`,
+    description:
+      def?.description ??
+      `Browse our ${label.toLowerCase()} collection. Premium handcrafted leather from Bishoftu, Ethiopia.`,
   };
 }
 
 export default function CategoryPage({ params }: { params: { category: string } }) {
-  if (!validCategories.includes(params.category as Category)) {
+  const legacy = LEGACY_CATEGORY_REDIRECTS[params.category];
+  if (legacy) {
+    redirect(`/shop/${legacy}`);
+  }
+
+  const def = getCategoryDef(params.category as Category);
+  if (!def) {
     notFound();
   }
 
@@ -31,7 +41,8 @@ export default function CategoryPage({ params }: { params: { category: string } 
   return (
     <ShopPageClient
       initialCategory={category}
-      categoryLabel={CATEGORY_LABELS[category]}
+      categoryLabel={def.label}
+      categoryDescription={def.description}
       productCount={count}
       products={products}
     />

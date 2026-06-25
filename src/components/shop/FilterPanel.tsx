@@ -3,26 +3,42 @@
 import { useState } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { cn, formatPrice, CATEGORY_LABELS, MATERIAL_LABELS } from '@/lib/utils';
+import { SUBCATEGORY_LABELS } from '@/lib/categories';
 import { ALL_SIZES, ALL_COLORS, PRICE_RANGE } from '@/lib/products';
-import type { FilterState, Category, Material } from '@/types';
+import { ALL_CATEGORIES, getSubcategoriesFor } from '@/lib/categories';
+import type { FilterState, Category, Material, Subcategory } from '@/types';
 
 interface FilterPanelProps {
   filters: FilterState;
   onChange: (filters: FilterState) => void;
   productCount: number;
+  /** When set, show subcategory filters for this department */
+  activeCategory?: Category;
 }
 
-const CATEGORIES: Category[] = ['shoes', 'jackets', 'wallets', 'bags', 'belts'];
 const MATERIALS: Material[] = ['full-grain', 'top-grain', 'suede', 'nubuck'];
 
-export default function FilterPanel({ filters, onChange, productCount }: FilterPanelProps) {
+export default function FilterPanel({
+  filters,
+  onChange,
+  productCount,
+  activeCategory,
+}: FilterPanelProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const subcategoryOptions = activeCategory ? getSubcategoriesFor(activeCategory) : [];
 
   const toggleCategory = (cat: Category) => {
     const cats = filters.categories.includes(cat)
       ? filters.categories.filter((c) => c !== cat)
       : [...filters.categories, cat];
     onChange({ ...filters, categories: cats });
+  };
+
+  const toggleSubcategory = (sub: Subcategory) => {
+    const subs = filters.subcategories.includes(sub)
+      ? filters.subcategories.filter((s) => s !== sub)
+      : [...filters.subcategories, sub];
+    onChange({ ...filters, subcategories: subs });
   };
 
   const toggleMaterial = (mat: Material) => {
@@ -48,7 +64,8 @@ export default function FilterPanel({ filters, onChange, productCount }: FilterP
 
   const clearFilters = () => {
     onChange({
-      categories: [],
+      categories: activeCategory ? [activeCategory] : [],
+      subcategories: [],
       priceRange: PRICE_RANGE,
       materials: [],
       sizes: [],
@@ -57,7 +74,8 @@ export default function FilterPanel({ filters, onChange, productCount }: FilterP
   };
 
   const activeFilterCount =
-    filters.categories.length +
+    (activeCategory ? 0 : filters.categories.length) +
+    filters.subcategories.length +
     filters.materials.length +
     filters.sizes.length +
     filters.colors.length +
@@ -77,26 +95,51 @@ export default function FilterPanel({ filters, onChange, productCount }: FilterP
         )}
       </div>
 
-      <div>
-        <h4 className="font-body text-sm font-medium text-brand-dark mb-3 uppercase tracking-wider">
-          Category
-        </h4>
-        <div className="space-y-2">
-          {CATEGORIES.map((cat) => (
-            <label key={cat} className="flex items-center gap-2 cursor-pointer group">
-              <input
-                type="checkbox"
-                checked={filters.categories.includes(cat)}
-                onChange={() => toggleCategory(cat)}
-                className="w-4 h-4 rounded border-brand-dark/30 text-brand-gold focus:ring-brand-gold"
-              />
-              <span className="text-sm font-body text-brand-gray group-hover:text-brand-dark transition-colors">
-                {CATEGORY_LABELS[cat]}
-              </span>
-            </label>
-          ))}
+      {!activeCategory && (
+        <div>
+          <h4 className="font-body text-sm font-medium text-brand-dark mb-3 uppercase tracking-wider">
+            Department
+          </h4>
+          <div className="space-y-2">
+            {ALL_CATEGORIES.map((cat) => (
+              <label key={cat} className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={filters.categories.includes(cat)}
+                  onChange={() => toggleCategory(cat)}
+                  className="w-4 h-4 rounded border-brand-dark/30 text-brand-gold focus:ring-brand-gold"
+                />
+                <span className="text-sm font-body text-brand-gray group-hover:text-brand-dark transition-colors">
+                  {CATEGORY_LABELS[cat]}
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {subcategoryOptions.length > 0 && (
+        <div>
+          <h4 className="font-body text-sm font-medium text-brand-dark mb-3 uppercase tracking-wider">
+            Type
+          </h4>
+          <div className="space-y-2">
+            {subcategoryOptions.map((sub) => (
+              <label key={sub.slug} className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={filters.subcategories.includes(sub.slug)}
+                  onChange={() => toggleSubcategory(sub.slug)}
+                  className="w-4 h-4 rounded border-brand-dark/30 text-brand-gold focus:ring-brand-gold"
+                />
+                <span className="text-sm font-body text-brand-gray group-hover:text-brand-dark transition-colors">
+                  {sub.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <h4 className="font-body text-sm font-medium text-brand-dark mb-3 uppercase tracking-wider">
@@ -239,6 +282,13 @@ export function ActiveFilters({
       label: CATEGORY_LABELS[cat],
       remove: () =>
         onChange({ ...filters, categories: filters.categories.filter((c) => c !== cat) }),
+    })
+  );
+  filters.subcategories.forEach((sub) =>
+    tags.push({
+      label: SUBCATEGORY_LABELS[sub],
+      remove: () =>
+        onChange({ ...filters, subcategories: filters.subcategories.filter((s) => s !== sub) }),
     })
   );
   filters.materials.forEach((mat) =>

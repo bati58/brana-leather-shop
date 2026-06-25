@@ -1,23 +1,7 @@
 import { CategoryCard } from '@/components/shop/ProductCard';
 import { categoryCounts } from '@/lib/products';
-
-const categories = [
-  {
-    title: 'Shoes',
-    slug: 'shoes',
-    image: 'https://images.unsplash.com/photo-1614252237536-bc5935eb1e89?w=800&q=80&fit=crop',
-  },
-  {
-    title: 'Jackets',
-    slug: 'jackets',
-    image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80&fit=crop',
-  },
-  {
-    title: 'Wallets & Bags',
-    slug: 'wallets',
-    image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800&q=80&fit=crop',
-  },
-];
+import { categoryImage } from '@/lib/marketing-images';
+import { CATALOG } from '@/lib/categories';
 
 export default function Categories() {
   return (
@@ -31,13 +15,13 @@ export default function Categories() {
             Each piece tells a story of Ethiopian craftsmanship passed down through generations.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {categories.map((cat) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {CATALOG.map((cat) => (
             <CategoryCard
               key={cat.slug}
-              title={cat.title}
-              count={categoryCounts[cat.slug as keyof typeof categoryCounts] || 0}
-              image={cat.image}
+              title={`${cat.emoji} ${cat.label}`}
+              count={categoryCounts[cat.slug]}
+              image={categoryImage(cat.slug)}
               href={`/shop/${cat.slug}`}
             />
           ))}
