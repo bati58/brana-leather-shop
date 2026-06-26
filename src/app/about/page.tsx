@@ -1,14 +1,23 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { MapPin, Phone, Clock } from 'lucide-react';
 import AboutContactForm from './AboutContactForm';
 import { siteConfig } from '@/lib/site-config';
+import { getFeaturedProducts } from '@/lib/products';
+import type { Product } from '@/types';
 
 export const metadata: Metadata = {
   title: 'Our Story — About Brana Leather',
   description:
     'Discover the story behind Brana Leather — preserving Ethiopian leather craftsmanship in Bishoftu, Seven Lake City.',
 };
+
+const behindScenesProducts: Product[] = [
+  getFeaturedProducts().find((p) => p.category === 'footwear'),
+  getFeaturedProducts().find((p) => p.category === 'bags'),
+  getFeaturedProducts().find((p) => p.category === 'clothing-accessories'),
+].filter((p): p is Product => p !== undefined);
 
 const values = [
   {
@@ -97,20 +106,24 @@ export default function AboutPage() {
           Behind the Scenes
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            'photo-1565084888279-aca607ecce0c',
-            'photo-1556909114-f6e7ad7d3136',
-            'photo-1601925260368-ae2f83cf8b7f',
-          ].map((id, i) => (
-            <div key={id} className="relative aspect-[4/3] rounded-lg overflow-hidden">
+          {behindScenesProducts.map((product) => (
+            <Link
+              key={product.id}
+              href={`/product/${product.slug}`}
+              className="group relative aspect-[4/3] rounded-lg overflow-hidden"
+            >
               <Image
-                src={`https://images.unsplash.com/${id}?w=600&q=80&fit=crop`}
-                alt={`Brana Leather workshop ${i + 1}`}
+                src={product.images[0]}
+                alt={product.name}
                 fill
-                className="object-cover hover:scale-105 transition-transform duration-500"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width: 640px) 100vw, 33vw"
               />
-            </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <p className="absolute bottom-3 left-3 right-3 font-display text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {product.name}
+              </p>
+            </Link>
           ))}
         </div>
       </section>
