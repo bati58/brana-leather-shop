@@ -69,8 +69,8 @@ export default function AboutPage() {
           </div>
           <div className="relative aspect-[4/5] rounded-lg overflow-hidden">
             <Image
-              src="https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=800&q=80&fit=crop"
-              alt="Ethiopian leather artisan at work in Brana Leather workshop"
+              src="/products/leather-journal-cover.jpg"
+              alt="Handcrafted leather journal cover by Brana Leather"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"

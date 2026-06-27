@@ -35,8 +35,8 @@ export default function AboutTeaser() {
 
           <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-white/10">
             <Image
-              src="https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=1000&q=80&fit=crop"
-              alt="Ethiopian leather artisans at work"
+              src="/products/desk-organizer-tray.jpg"
+              alt="Handcrafted leather desk organizer by Brana Leather"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"

@@ -8,21 +8,21 @@ import Button from '@/components/ui/Button';
 
 const heroSlides = [
   {
-    image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1920&q=80&fit=crop',
+    image: '/products/classic-leather-jacket.jpg',
     eyebrow: 'Handcrafted in Bishoftu, Ethiopia',
     title: ['Crafted for Legacy.', 'Designed for Modern Life.', 'Worn with Confidence.'],
     subtitle:
       'Discover premium 100% genuine leather shoes, jackets, wallets, and bags made by Ethiopian artisans to age beautifully for years.',
   },
   {
-    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1920&q=80&fit=crop',
+    image: '/products/artisan-shoulder-bag.jpg',
     eyebrow: 'Premium Ethiopian Craft',
     title: ['Raw Leather.', 'Refined Finish.', 'Timeless Presence.'],
     subtitle:
       'From the workshop to your wardrobe, every piece is stitched with care, character, and uncompromising quality.',
   },
   {
-    image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1920&q=80&fit=crop',
+    image: '/products/heritage-oxford-shoes.jpg',
     eyebrow: 'Built to Last a Lifetime',
     title: ['Own Fewer.', 'Choose Better.', 'Wear Brana.'],
     subtitle:
@@ -110,7 +110,7 @@ export default function Hero() {
         <Image
           key={slide.image}
           src={slide.image}
-          alt="Premium handcrafted leather goods - Brana Leather Ethiopia"
+          alt="Premium handcrafted leather goods from Brana Leather Ethiopia"
           fill
           priority={index === 0}
           className={`object-cover transition-opacity duration-1000 ${
